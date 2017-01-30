@@ -1,0 +1,172 @@
+﻿{% extends "base.html" %}
+{% block title %}Account Summary for {{ username }}{% endblock %}
+{% block head %}
+        <meta property="og:site_name" content="Steam Gauge"/>
+        <meta property="og:title" content="Steam Gauge Account Summary for {{ username }}" />
+        <meta property="og:url" content="http://www.mysteamgauge.com/search?username={{ username }}" />
+        <meta property="og:description" content="Steam Gauge allows you to get a customizable summary of your Steam account, including game values, install sizes, and play time." />
+        <meta property="og:image" content="{{ useravatar }}" />
+        <script src="{{ url_for('static', filename='jquery-1.9.1.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='jquery.tablesorter.js') }}"></script>
+        <!-- jquery.tablesorter.js by Christian Bach "http://tablesorter.com/" -->
+        <script src="{{ url_for('static', filename='calculate.js') }}"></script>
+        <link rel="stylesheet" href="{{ url_for('static', filename='icomoon.css') }}" />
+        <!--
+        Icon Set:	IcoMoon - Free -- http://keyamoon.com/icomoon/
+        License:	CC BY 3.0 -- http://creativecommons.org/licenses/by/3.0/
+        -->
+        <!--[if gte IE 9]>
+            <style type="text/css">
+                #headerrow th, #summary td{
+                   filter: none;
+                }
+            </style>
+        <![endif]-->
+        <style type="text/css">
+            #hanging_nav > div{
+                width:800px;
+            }
+            #lightscreen{
+                display:none;
+            }
+            #lightscreenform{
+                display:none;
+            }
+        </style>
+{% endblock %}
+{% block content %}
+    <div style="margin:0px auto 20px auto;width:800px;">
+        <div style="margin:2em auto;text-align:center;">
+            <!--<h1><a style="color:#EEEEEE;text-decoration:none;line-height: 1.1em;vertical-align:bottom;" href="http://www.mysteamgauge.com"><i class="icon-dashboard"></i>&nbsp;Steam Gauge</a></h1>-->
+        </div>
+        <div style="height:20px;clear:both;"></div>
+        <!-- <div class="ad_div" style="width:50%;float:left;clear:left;">
+
+        </div>
+        <div class="ad_div" style="width:50%;float:right;clear:right;">
+
+        </div> -->
+        <div style="height:1em;clear:both;"></div>
+        <img id="useravatar" src="{{ useravatar }}">
+        <h2 id="userhead" style="width:100%;margin:0px auto;color:#eeeeee;padding:0px;">Account summary for <a href="http://steamcommunity.com/id/{{ username }}" target="_blank">{{ username }}</a></h2>
+        <table id="summary_options" style="margin:0px auto;border-collapse:collapse;border-spacing:0;border:0px solid gray;">
+            <tr>
+                <td>
+                    <form id="userform" action="./search" method="get" target="">
+                        <input id="urltext" style="margin-left:0px;margin-right:0px;float:left;-webkit-border-top-right-radius:0px;-webkit-border-bottom-right-radius:0px;-moz-border-radius-topright:0px;-moz-border-radius-bottomright:0px;border-top-right-radius:0px;border-bottom-right-radius:0px;" type="text" name="username" size="20" autocomplete="off"></input>
+                        <input type="submit" style="margin-left:0px;-webkit-border-top-left-radius:0px;-webkit-border-bottom-left-radius:0px;-moz-border-radius-topleft:0px;-moz-border-radius-bottomleft:0px;border-top-left-radius:0px;border-bottom-left-radius:0px;" value="Calculate" onclick="lightscreen();">
+                        </input>
+                    </form>
+                    <select id="optionbox" onchange="typecheck(document.getElementById('optionbox').value);">
+                        <option value="All" selected>Everything</option>
+                        <option value="None">Nothing</option>
+                        <option value="Game">Games only</option>
+                        <option value="App">Apps only</option>
+                        <option value="DLC">DLC only</option>
+                        <option value="Movie">Movies only</option>
+                        <option value="Mac">Mac OS</option>
+                        <option value="Linux">Linux</option>
+                        <option value="Multiplayer">Multiplayer</option>
+                        <option value="Controller">Controller Support</option>
+                    </select>
+                    <label style="text-shadow:#3d3d3d 1px 1px 1px;font-size:0.75em;"><input type="radio" id="unit_MB" name="space_unit" value="MB" onclick="update_unit();"> MB</label>
+                    <label style="text-shadow:#3d3d3d 1px 1px 1px;font-size:0.75em;"><input type="radio" id="unit_GB" name="space_unit" value="GB" onclick="update_unit();"> GB</label>
+                </td>
+                <td>
+                    <div id="topsummary"></div>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding-right:1em;">
+                    <a id="bookmarklet_link" style="color:#61892b;font-size:0.75em;" href="http://www.mysteamgauge.com/receipt" target="_blank"><i class="icon-info-sign" style="text-decoration:none;margin-right:1em;"></i>Want to know how much you've <span style="font-style:italic;">spent</span> on Steam?</a>
+                </td>
+                <td>
+                    <a id="dl_link" style="color:#61892b;font-size:0.75em;" href="http://mysteamgauge.com/user/{{ username }}.csv" target="_blank"><i class="icon-download-alt" style="text-decoration:none;margin-right:1em;"></i>Export this summary</a>
+                </td>
+            </tr>
+        </table>
+        <div style="clear:both;height:1em;"></div>
+        <div id="game_total_bar" style="height:10px;margin:0px auto;background-color:#EEEEEE;color:#54bbff;border:1px solid white;text-align:right;border-radius:2px;">
+            <div id="game_selection_bar" style="height:10px;opacity:0.75;background-color:#61892b;color:#EEEEEE;text-align:left;border-radius:2px;"></div>
+        </div>
+        <br/>
+        <table id="gamelist" class="tablesorter" cellspacing="0">
+            <thead>
+                <tr id="headerrow">
+                    <th id="checkbox_header">
+                        &nbsp;<i class="icon-ok"></i>
+                    </th>
+                    <th id="type_header">Type</th>
+                    <th id="gameid_header">ID</th>
+                    <th id="gamename_header">Title</th>
+                    <th id="os_header">OS</th>
+                    <th id="controller_header">Controller Support</th>
+                    <th id="metascore_header">Metascore</th>
+                    <th id="multiplay_header">Multi-player</th>
+                    <th id="playtime_header">Hours Played</th>
+                    <th id="value_header">Value (USD)</th>
+                    <th id="size_header">Size</th>
+                    <th id="unit_header">Unit</th>
+                </tr>
+            </thead>
+            <tbody onload="update_count();">
+            {{ table }}
+            </tbody>
+            <tfoot>
+                <tr id="summary">
+                    <td id="checkbox_footer" style="-webkit-border-bottom-left-radius:5px;-moz-border-radius-bottomleft:5px;border-bottom-left-radius:5px;">
+                        <input name="checkall" type="checkbox" checked="checked" onclick="checkall(this);">
+                    </td>
+                    <td id="type_footer"></td>
+                    <td id="gameid_footer"></td>
+                    <td id="gamename_footer"></td>
+                    <td id="os_footer"></td>
+                    <td id="controller_footer"></td>
+                    <td id="metascore_footer"></td>
+                    <td id="multiplay_footer"></td>
+                    <td id="playtime_footer"></td>
+                    <td id="value_footer"></td>
+                    <td id="size_footer"></td>
+                    <td id="unit_footer" style="-webkit-border-bottom-right-radius:5px;-moz-border-radius-bottomright:5px;border-bottom-right-radius:5px;"></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    <!-- Try to parse Steam profile id if a URL is pasted into the search input field. -->
+    <script type="text/javascript">
+        var account_age = new Date ({{ accountcreation }} * 1000);
+        var today = new Date();
+        var year_diff = today.getFullYear() - account_age.getFullYear();
+        var profile_url;
+        $('#urltext').change(function(){
+            profile_url = $(this)[0].value;
+            if (profile_url.slice(0,4) === 'http'){
+                if (profile_url[profile_url.length-1] === '/'){
+                    profile_url = profile_url.slice(0,[profile_url.length-1]);
+                }
+                $('#urltext')[0].value = profile_url.substr(profile_url.lastIndexOf('/')+1);
+            }
+        });
+
+
+        $(document).ready(function(){
+            $("#gamelist").tablesorter({headers:{0:{sorter:false}}});
+        });
+
+
+        window.onload = function(){
+            $('.win_os').append('<i class="icon-windows"></i>');
+            $('.mac_os').append('<i class="icon-apple"></i>');
+            $('.linux_os').append('<i class="icon-tux"></i>');
+            update_count();
+            create_social();
+            if ($('.gamerow')[0].firstChild.innerHTML === ''){
+                $('#dl_link').remove();
+                $('#socialdiv').remove();
+                $('#useravatar').remove();
+            }
+            $('#unit_MB').click();
+            update_unit();
+        }
+    </script>
+{% endblock %}

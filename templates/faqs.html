@@ -1,0 +1,35 @@
+﻿{% extends "base.html" %}
+{% block title %}Steam Gauge FAQs{% endblock %}
+{% block head %}
+        <!--[if gte IE 9]>
+            <style type="text/css">
+                #headerrow th, #summary td{
+                   filter: none;
+                }
+            </style>
+        <![endif]-->
+        <style type="text/css">
+            h3{
+                color:#eeeeee;
+                text-shadow: #3d3d3d 1px 1px 1px;
+            }
+            p{
+                color:#B0AEAC;
+            }
+        </style>
+{% endblock %}
+{% block content %} 
+    <div style="margin:0px auto 20px auto;width:640px;">
+        <div style="margin:2em auto;text-align:center;">
+            <!--<h1><a style="color:#EEEEEE;text-decoration:none;line-height: 1.1em;vertical-align:bottom;" href="http://www.mysteamgauge.com"><i class="icon-dashboard"></i>&nbsp;Steam Receipt</a></h1>-->
+        </div>
+        <div style="width:95%;padding:1em 2%;">
+            <h3>Why does Steam Gauge report such high account values? I didn't actually pay this much for my Steam Games!</h3>
+            <img style="float:left;margin:0px 1em 1em 0px;-webkit-border-radius:5px;border-radius:5px;border:3px solid #B0AEAC;max-width:90%;" src="{{ url_for('static', filename='account-page.png') }}"/>
+            <p>You may have noticed that Steam Gauge only returns the Steam store price of a game, and not the amount you actually paid for it. This is because Valve does not allow access to your Steam transaction history by outside parties (this is a good thing). However, you can still see a transaction history of your account on Steam's website at: <a href="https://store.steampowered.com/account/" target="_blank">https://store.steampowered.com/account</a></p>
+            <p>Unfortunately, the transaction history isn't as straightforward as it could be. Because of this, I've created a <a href="http://www.mysteamgauge.com/receipt">javascript bookmarklet</a> that will summarize your account data quickly and easily.</p>
+            <h3>Why won't my account work?</h3>
+            <p></p>
+        </div>
+    </div>
+{% endblock %}

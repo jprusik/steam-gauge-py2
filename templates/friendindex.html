@@ -1,0 +1,104 @@
+﻿{% extends "base.html" %}
+{% block title %}Find out what multiplayer games you and your friends have in common{% endblock %}
+{% block head %}
+    <script src="{{ url_for('static', filename='jquery-1.9.1.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='calculate.js') }}"></script>
+    <style type="text/css">
+        #lightscreen{
+            display:none;
+        }
+        #lightscreenform{
+            display:none;
+        }
+        #newsbox::-webkit-scrollbar{
+            -webkit-appearance:none;
+            width:8px;
+            height:8px;
+            background-color:#DDDDDD;
+            -webkit-border-top-right-radius:4px;
+            -webkit-border-bottom-right-radius:4px;
+            border-top-right-radius:4px;
+            border-bottom-right-radius:4px;
+        }
+        #newsbox::-webkit-scrollbar-thumb{
+            background-color:#BBBBBB;
+            -webkit-box-shadow:0 0 1px rgba(255,255,255,.5);
+            box-shadow:0 0 1px rgba(255,255,255,.5);
+            -webkit-border-top-right-radius:4px;
+            -webkit-border-bottom-right-radius:4px;
+            border-top-right-radius:4px;border-bottom-right-radius:4px;
+        }
+        #newsbox::-webkit-scrollbar-thumb:hover{
+            background-color: #3D3D3D;
+        }
+        #newsbox{
+            max-width:540px;
+            margin:auto;
+            color:#B0AEAC;
+            font-size:0.6em;
+            height:160px;
+            -webkit-border-radius:4px;
+            border-radius:4px;
+            overflow-y:scroll;
+            border-top:1px solid #DDDDDD;
+            border-bottom:1px solid #DDDDDD;
+            padding:5px;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <div id="content_main" style="margin-top:50px;margin:5% auto;width:640px;">
+        <div style="margin:40px auto;text-align:center;">
+            <h1><a style="color:#EEEEEE;text-decoration:none;line-height: 1.1em;vertical-align:bottom;" href="http://www.mysteamgauge.com"><i class="icon-group"></i>&nbsp;Steam Friends</a></h1>
+            <p style="font-style:italic;">Find out what multiplayer games you and your friends have in common</p>
+        </div>
+        <table style="margin:0px auto;border-collapse:collapse;border:0px solid gray;">
+            <tr>
+                <td>
+                    {# <div style="background-color: #b3d4fc;color: #3d3d3d;padding: 1em;font-size: 12px;-webkit-border-radius: 5px;border-radius: 5px;">Steam Friends is currently experiencing issues; please check back later. Sorry for the inconvenience!</div> #}
+                    <form id="userform" style="width:100%;" action="./friends" method="get" target="">
+                        <span style="float:left;line-height:28px;color:#B0AEAC;">http://steamcommunity.com/id/&nbsp;</span>
+                        <div style="white-space:nowrap;float:right;">
+                            <input id="urltext" style="margin-left:0px;margin-right:0px;float:left;-webkit-border-top-right-radius:0px;-webkit-border-bottom-right-radius:0px;-moz-border-radius-topright:0px;-moz-border-radius-bottomright:0px;border-top-right-radius:0px;border-bottom-right-radius:0px;" type="text" name="username" size="20" autocomplete="off">
+                            <input type="submit" style="margin-left:0px;-webkit-border-top-left-radius:0px;-webkit-border-bottom-left-radius:0px;-moz-border-radius-topleft:0px;-moz-border-radius-bottomleft:0px;border-top-left-radius:0px;border-bottom-left-radius:0px;" value="Find" onclick="lightscreen();">
+                        </div>
+                    </form>
+                </td>
+            </tr>
+        </table>
+        {#<div style="text-align: center;">
+            <br/>
+            <iframe allowTransparency="true" frameborder="0" scrolling="no" src="//www.facebook.com/plugins/like.php?href=http://mysteamgauge.com/friends&send=false&layout=button_count&show_faces=false&action=like&colorscheme=light&font=arial" style="border:none;width:88px;height:20px"></iframe><div class="g-plusone" data-size="medium" annotation="bubble" data-href="http://mysteamgauge.com/friends" style="width:72px;height:20px;"></div><script type="text/javascript" src="https://apis.google.com/js/plusone.js" async></script><iframe allowtransparency="true" frameborder="0" scrolling="no" src="https://platform.twitter.com/widgets/tweet_button.html?url=http://mysteamgauge.com/friends&text=Steam Friends finds out what multiplayer games you and your friends have in common&count=horizontal" style="width:110px;height:20px;"></iframe>
+        </div>#}
+        <p style="font-size:0.75em;padding-top:5px;text-align:center;color:#61892b;font-weight:bold;clear:both;">
+            Important Notes:<br/><br/>
+            If you have a large number of friends (100+) associated with your Steam profile, this will take a LONG time. Go grab a coffee or something.<br/><br/>
+            Your Steam profile must be <a style="text-decoration:underline;" href="https://support.steampowered.com/kb_article.php?ref=4113-YUDH-6401" target="_blank">publically viewable</a> for this tool to work!
+        </p>
+        <div style="height:20px;clear:both;"></div>
+        <!-- <div class="ad_div" style="width:50%;float:left;clear:left;">
+
+        </div>
+        <div class="ad_div" style="width:50%;float:right;clear:right;">
+
+        </div> -->
+        <div style="height:5px;clear:both;"></div>
+    </div>
+    <div style="margin:auto;max-width:540px;color:#B0AEAC;font-size:0.6em;text-align:left;">
+
+    </div>
+    <br/>
+    <!-- Try to parse Steam profile id if a URL is pasted into the search input field. -->
+    <script type="text/javascript">
+        var profile_url;
+        $('#urltext').change(function(){
+            profile_url = $(this)[0].value;
+            if (profile_url.slice(0,4) === 'http'){
+                if (profile_url[profile_url.length-1] === '/'){
+                    profile_url = profile_url.slice(0,[profile_url.length-1]);
+                }
+                $('#urltext')[0].value = profile_url.substr(profile_url.lastIndexOf('/')+1);
+            }
+        });
+    </script>
+{% endblock %}

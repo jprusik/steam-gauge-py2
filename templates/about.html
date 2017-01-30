@@ -1,0 +1,34 @@
+﻿{% extends "base.html" %}
+{% block title %}About Steam Gauge{% endblock %}
+{% block head %}
+        <!--[if gte IE 9]>
+            <style type="text/css">
+                #headerrow th, #summary td{
+                   filter: none;
+                }
+            </style>
+        <![endif]-->
+        <style type="text/css">
+            h3{
+                color:#eeeeee;
+                text-shadow: #3d3d3d 1px 1px 1px;
+            }
+            p{
+                color:#B0AEAC;
+            }
+            #lightscreen, #lightscreenform{
+                display:none;
+            }
+        </style>
+{% endblock %}
+{% block content %}
+    <div style="margin:0px auto 20px auto;width:100%;max-width:640px;">
+        <div style="margin:2em auto;text-align:left;">
+            <h2>About the App</h2>
+            <p>Steam Gauge is a <a href="http://www.python.org/" target="_blank">Python-based</a> web app driven by <a href="http://flask.pocoo.org/" target="_blank">Flask</a>. It makes use of Steam's Web API, Big Picture API, and several custom Python scripts that scrape data from the Steam Store pages (if necessary). That metadata is stored in a database for easy retrieval by the Steam Gauge app. Steam Gauge does not currently store any information about your account (your login id is stored in your browser as a cookie).</p>
+            <br/>
+            <h2>About Me</h2>
+            <p>My name is Jon Prusik, and I'm a Boston-based Full Stack web engineer who specializes in Python, MySQL, and JavaScript. <a href="http://www.mysteamgauge.com">MySteamGauge.com</a> is my first Python web app.</p>
+        </div>
+    </div>
+{% endblock %}

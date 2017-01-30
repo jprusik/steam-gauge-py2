@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+{% block title %}Get the value and size of your Steam account{% endblock %}
+{% block head %}
+    <meta property="og:site_name" content="Steam Gauge"/>
+    <meta property="og:title" content="Steam Gauge | Get the value and size of your Steam account" />
+    <meta property="og:url" content="http://www.mysteamgauge.com" />
+    <meta property="og:description" content="Steam Gauge allows you to get a customizable summary of your Steam account, including game values, install sizes, and play time." />
+    <meta property="og:image" content="http://www.mysteamgauge.com{{ url_for('static', filename='favicon-large.png') }}" />
+    <meta property="fb:admins" content="5807077" />
+    <script src="{{ url_for('static', filename='jquery-1.9.1.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='calculate.js') }}"></script>
+    <style type="text/css">
+        #openid_logout{
+            font-size:0.75em;
+            font-style:italic;
+        }
+        #steam_login{
+            width:100%;
+            text-align:center;
+            display:block;
+            margin:auto;
+        }
+        #steam_login_button{
+            display:block;
+            width:114px;
+            height:43px;
+            margin:auto;
+            background-image:url('{{ url_for('static', filename='images/sits_large_noborder_map.png') }}');
+            background-repeat:no-repeat;
+            background-position:0px 0px;
+        }
+        #steam_login_button:hover{
+            background-position:0px -43px;
+        }
+        @media only screen and (max-width:640px){
+
+        }
+        #lightscreen{
+            display:none;
+        }
+        #lightscreenform{
+            display:none;
+        }
+        #newsbox::-webkit-scrollbar{
+            -webkit-appearance:none;
+            width:8px;
+            height:8px;
+            background-color:#DDDDDD;
+            -webkit-border-top-right-radius:4px;
+            -webkit-border-bottom-right-radius:4px;
+            border-top-right-radius:4px;
+            border-bottom-right-radius:4px;
+        }
+        #newsbox::-webkit-scrollbar-thumb{
+            background-color:#BBBBBB;
+            -webkit-box-shadow:0 0 1px rgba(255,255,255,.5);
+            box-shadow:0 0 1px rgba(255,255,255,.5);
+            -webkit-border-top-right-radius:4px;
+            -webkit-border-bottom-right-radius:4px;
+            border-top-right-radius:4px;border-bottom-right-radius:4px;
+        }
+        #newsbox::-webkit-scrollbar-thumb:hover{
+            background-color: #3D3D3D;
+        }
+        #newsbox{
+            max-width:530px;
+            margin:auto;
+            color:#B0AEAC;
+            font-size:0.6em;
+            height:160px;
+            -webkit-border-radius:4px;
+            border-radius:4px;
+            overflow-y:scroll;
+            border-top:1px solid #DDDDDD;
+            border-bottom:1px solid #DDDDDD;
+            padding:5px;
+        }
+        .summary {
+            font-size: 0.85em;
+            font-weight: normal !important;
+            letter-spacing: 3px;
+            font-family: ImpactEmb,Impact,Helvetica,Arial,sans-serif;
+            text-transform: uppercase;
+            text-shadow: -1px -1px 0px rgba(0, 0, 0, 0.7);
+        }
+        #twitter-widget-0{
+            max-width: 550px !important;
+            width: 85%;
+            margin: 15px auto;
+            display: block;
+        }
+        .timeline .stream::-webkit-scrollbar {
+            -webkit-appearance: none;
+            width: 8px;
+            height: 8px;
+            background-color: #DDDDDD;
+            -webkit-border-top-right-radius: 4px;
+            -webkit-border-bottom-right-radius: 4px;
+            border-top-right-radius: 4px;
+            border-bottom-right-radius: 4px;
+        }
+        .timeline .stream::-webkit-scrollbar-thumb{
+            background-color: #BBBBBB;
+            -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
+            box-shadow: 0 0 1px rgba(255,255,255,.5);
+            -webkit-border-top-right-radius: 4px;
+            -webkit-border-bottom-right-radius: 4px;
+            border-top-right-radius: 4px;
+            border-bottom-right-radius: 4px;
+        }
+        .updates_date{
+            font-weight:bold;
+            text-decoration:underline;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <div id="content_main" style="margin:5% auto;width:640px;">
+        <div style="margin:35px auto;text-align:center;">
+            <h1><a style="color:#EEEEEE;text-decoration:none;line-height: 1.1em;vertical-align:bottom;" href="http://www.mysteamgauge.com"><i class="icon-dashboard"></i>&nbsp;Steam Gauge</a></h1>
+            <p style="font-style:italic;">Get the value and size of your Steam account</p>
+        </div>
+        {# <div id="special_message" style="margin: 0px auto 2em auto;font-size: 0.75em;background-color: slategray;color: #eee;border: 1px solid #eee;padding: 0.75em;"></div> #}
+        <table class="account_search" style="margin:0px auto;border-collapse:collapse;border:0px solid gray;">
+            <tr>
+                <td style="color:#B0AEAC;">
+                    {# The Steam Gauge database is currently undergoing maintenance. Please check back later. #}
+                    <br/>
+                    {% if session.account_id %}
+                        <div style="width:100%;max-width:500px;margin:auto;">
+                            <span style="float:left;line-height:28px;">http://steamcommunity.com/id/&nbsp;</span>
+                            <form action="./account" method="get" target="" title="Account Search" style="float: right;width: 215px;">
+                                    <input class="urltext" style="margin-left:0px;margin-right:0px;float:left;height: 28px;border: 0px solid #3d3d3d;-webkit-appearance:none;-webkit-border-radius:0px;border-radius:0px;border-top-left-radius: 3px;border-bottom-left-radius: 3px;padding: 0px 5px;background-color: #eeeeee;outline: none;" type="text" name="username" size="20" autocomplete="off">
+                                    <input type="submit" style="margin-left:0px;-webkit-appearance:none;-webkit-border-radius:0px;border-radius:0px;border-top-right-radius: 3px;border-bottom-right-radius: 3px;height: 28px;cursor: pointer;color: #e5e4dc;padding: 0px 10px;background: #61892b;border-width: 0px;border-left: 1px solid #666;font-family: FontAwesome;" value="" title="Account Search">
+                            </form>
+                        </div>
+                        <div style="width:100%;text-align:center;display:block;margin:50px auto 20px auto;clear:both;">or</div>
+                        <div id="steam_logged_in" style="width:100%;text-align:center;color:#B0AEAC;display:block;margin:auto;clear:both;">
+                            Lookup Your Account ID: <a href="{{ url_for('account', username=session.account_id) }}">{{ session.account_id }}</a><br />
+                            <a id="openid_logout" href="{{ url_for('logout') }}">(Logout)</a>
+                        </div>
+                    {% else %}
+                        <div style="width:100%;max-width:500px;margin:auto;">
+                            <span style="float:left;line-height:28px;">http://steamcommunity.com/id/&nbsp;</span>
+                            <form action="./account" method="get" target="" title="Account Search" style="float: right;width: 215px;">
+                                    <input class="urltext" style="margin-left:0px;margin-right:0px;float:left;height: 28px;border: 0px solid #3d3d3d;-webkit-appearance:none;-webkit-border-radius:0px;border-radius:0px;border-top-left-radius: 3px;border-bottom-left-radius: 3px;padding: 0px 5px;background-color: #eeeeee;outline: none;" type="text" name="username" size="20" autocomplete="off">
+                                    <input type="submit" style="margin-left:0px;-webkit-appearance:none;-webkit-border-radius:0px;border-radius:0px;border-top-right-radius: 3px;border-bottom-right-radius: 3px;height: 28px;cursor: pointer;color: #e5e4dc;padding: 0px 10px;background: #61892b;border-width: 0px;border-left: 1px solid #666;font-family: FontAwesome;" value="" title="Account Search">
+                            </form>
+                        </div>
+                        <div style="width:100%;text-align:center;display:block;margin:50px auto 20px auto;clear:both;">or</div>
+                        <div id="steam_login">
+                            <a id="steam_login_button" href="{{ url_for('login') }}"></a>
+                        </div>
+                    {% endif %}
+                </td>
+            </tr>
+        </table>
+        <div style="height:1em;width:100%;clear:both;"></div>
+        <p style="font-size:0.75em;padding-top:5px;text-align:center;color:#61892b;font-weight:bold;clear:both;">Note: Your Steam profile must be <a style="text-decoration:underline;color:rgb(132,188,60);" href="https://support.steampowered.com/kb_article.php?ref=4113-YUDH-6401" target="_blank">publicly viewable</a> for this tool to work!</p>
+        {# <h3 style="width:85%;color:#eee;max-width:540px;margin:1em auto;font-size:0.85em;font-weight:normal;letter-spacing:3px;font-family:ImpactEmb,Impact,Helvetica,Arial,sans-serif;text-transform:uppercase;text-shadow:-1px -1px 0px rgba(0, 0, 0, 0.7);clear:both;">Updates</h3>
+        <a class="twitter-timeline" data-dnt="true" href="https://twitter.com/Steam_Gauge" data-widget-id="389059552215195650">Tweets by @Steam_Gauge</a>
+        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script> #}
+        <div style="text-align:center;height:20px;clear:both;padding:0.5em 0px;">
+            <iframe allowTransparency="true" frameborder="0" scrolling="no" src="//www.facebook.com/plugins/like.php?href=http://mysteamgauge.com/&send=false&layout=button_count&show_faces=false&action=like&colorscheme=light&font=arial" style="border:none;width:88px;height:20px"></iframe><div class="g-plusone" data-size="medium" annotation="bubble" data-href="http://mysteamgauge.com/" style="width:72px;height:20px;"></div><script type="text/javascript" src="https://apis.google.com/js/plusone.js" async></script><iframe allowtransparency="true" frameborder="0" scrolling="no" src="https://platform.twitter.com/widgets/tweet_button.html?url=http://mysteamgauge.com/&text=Steam Gauge gets the value and size of your Steam account&count=horizontal" style="width:110px;height:20px;"></iframe>
+        </div>
+    </div>
+    <br/>
+    <script type="text/javascript">
+        $(function(){
+            var cookie_openid = function(cookie_name){
+                var nameEQ = cookie_name+'=';
+                var ca = document.cookie.split(';');
+                for(var i=0;i < ca.length;i++){
+                    var c = ca[i];
+                    while (c.charAt(0)==' ') c = c.substring(1,c.length);
+                    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+                }
+                return null;
+            }
+
+            // Try to parse Steam profile id if a URL is pasted into the search input field.
+            $('.urltext').change(function(){
+                var profile_url = $(this)[0].value;
+                if (profile_url.slice(0,4) === 'http'){
+                    if (profile_url[profile_url.length-1] === '/'){
+                        profile_url = profile_url.slice(0,[profile_url.length-1]);
+                    }
+                    $('.urltext').val(profile_url.substr(profile_url.lastIndexOf('/')+1));
+                }
+            });
+
+            // Add listener for account search form
+            $('.account_search form').submit(function( event ) {
+                $('#lightscreen, #lightscreenform').show();
+            });
+        });
+
+    </script>
+{% endblock %}
